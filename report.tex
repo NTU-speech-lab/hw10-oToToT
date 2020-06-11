@@ -103,6 +103,8 @@
     \item 說明為何使用auc score來衡量而非binary classification常用的f1 score。如果使用f1 score會有什麼不便之處？
     
     因為助教有提到這次的anomaly其實不多，而若使用f1 score的話，很有可能直接輸出皆不是anomaly會有很好的效果，但是我們希望的是能偵測出anomaly，也就是我們更偏向「寧可錯殺而不要放過一個」的模式，因此採用auc score才比較容易達到如此的目標。
+
+    另一方面若使用auc score可以比較全面的評估一個模型的靈敏度(Sensitivity)以及特異度(Specificity)，因為他比較像是各種參數下的F score的綜合。
 \end{enumerate}
 
 \end{document}
