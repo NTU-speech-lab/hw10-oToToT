@@ -1,0 +1,108 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[left=1.2cm, right=1.5cm, top=1.6cm, bottom=1.3cm]{geometry}
+\usepackage{xeCJK}
+\usepackage{indentfirst}
+\usepackage{tabularx}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{verbatim}
+\usepackage{fancyhdr}
+% \usepackage[compact]{titlesec}
+\usepackage[usenames,dvipsnames]{xcolor}
+
+\setCJKmainfont{NotoSansCJKtc-Thin}
+\setmonofont{Consolas}
+
+\definecolor{CodeGreen}{rgb}{0,0.6,0}
+\definecolor{CodeGray}{rgb}{0.5,0.5,0.5}
+\definecolor{CodeMauve}{rgb}{0.58,0,0.82}
+\lstset{
+    basicstyle = \ttfamily\footnotesize, 
+    breakatwhitespace = false,
+    breaklines = true,         
+    commentstyle = \color{CodeGreen}\bfseries,
+    extendedchars = false,
+    keepspaces=true,
+    keywordstyle=\color{blue}\bfseries, % keyword style
+    language = C++,                     % the language of code
+    otherkeywords={string},
+    numbers=left,
+    numbersep=5pt,
+    numberstyle=\tiny\color{CodeGray},
+    rulecolor=\color{black},
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    stepnumber=1,       
+    stringstyle=\color{CodeMauve},        % string literal style
+    tabsize=2,
+}
+% from https://blog.csdn.net/RobertChenGuangzhi/article/details/45126785
+
+\title{Machine Learning 2020 - Homework 12 Report}
+\author{學號：b08902100, 系級：資工一, 姓名：江昱勳}
+\date{}
+
+\begin{document}
+\pagestyle{fancy}
+\fancyhead[L]{Machine Learning 2020 - Homework 12}
+\fancyhead[R]{Author: b08902100 江昱勳}
+
+\maketitle
+
+% \verbatiminput{HW2_S.txt}
+% \lstinputlisting{HW2.cpp}
+
+\begin{enumerate}
+    \item 任取一個baseline model (sample code裡定義的 fcn，cnn，vae) 與你在kaggle leaderboard上表現最好的單純autoencoder架構的model（如果表現最好的model就是sample code裡定義的model的話就再任選一個，e.g.  如果cnn最好那就再選fcn），對各自重建的testing data的image中選出與原圖mse最大的兩張加上最小的兩張並畫出來。（假設有五張圖，每張圖經由autoencoder A重建的圖片與原圖的MSE分別為 [25.4, 33.6, 15, 39, 54.8]，則MSE最大的兩張是圖4、5而最小的是圖1、3）。須同時附上原圖與經autoencoder重建的圖片。（圖片總數：(原圖+重建)*(兩顆model)*(mse最大兩張+mse最小兩張) = 16張）
+    
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=.9\textwidth]{baseline.pdf}
+        \caption{cnn 的 baseline model}
+        \label{}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=.9\textwidth]{best.pdf}
+        \caption{最好的autoencoder}
+        \label{}
+    \end{figure}
+
+    上面的圖片前兩者皆是最差的兩個，後兩者皆是最好的兩個，而上方是原本的圖片，下面是autoencoder的輸出
+
+    \item 嘗試把 sample code中的K-means 與 PCA 分別做在 autoencoder 的 encoder output 上，並回報兩者的auc score以及本來model的auc。autoencoder不限。不論分數與本來的model相比有上升還是下降，請同學簡述原因。
+
+    在不使用PCA與KNN的情況下的score為0.62262，若使用PCA降維成16維則score為0.66144，使用K-Means分成6群的話score為0.69602。可以發現將PCA應用再autoencoder的encoder output上可以有一定幅度的提升，可以猜測是因為anomaly與正常的東西的組成不太一樣，所以使用PCA投影回去時會有明顯的不同，另外從K-Means的結果我們更可以知道，這種不同更可能是某種距離上的不同，所以直接使用K-Means來找出比較遠的點的時候會有更好的效果。
+
+    \item 如hw9，使用PCA或T-sne將testing data投影在2維平面上，並將testing data經第1題的兩顆model的encoder降維後的output投影在2維平面上，觀察經encoder降維後是否分成兩群的情況更明顯。（因未給定testing label，所以點不須著色）
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=.9\textwidth]{origin_pca.pdf}
+        \caption{PCA on original image}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=.9\textwidth]{baseline_pca.pdf}
+        \caption{PCA on baseline model}
+    \end{figure}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=.9\textwidth]{best_pca.pdf}
+        \caption{PCA on best model}
+    \end{figure}
+
+    可以發現越好的model會在降為後的圖形上有越集中於某一塊的取向。
+
+    \item 說明為何使用auc score來衡量而非binary classification常用的f1 score。如果使用f1 score會有什麼不便之處？
+    
+    因為助教有提到這次的anomaly其實不多，而若使用f1 score的話，很有可能直接輸出皆不是anomaly會有很好的效果，但是我們希望的是能偵測出anomaly，也就是我們更偏向「寧可錯殺而不要放過一個」的模式，因此採用auc score才比較容易達到如此的目標。
+\end{enumerate}
+
+\end{document}
